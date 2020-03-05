@@ -1,0 +1,19 @@
+#pragma once
+#include <eosio/testing/tester.hpp>
+
+namespace eosio {
+namespace testing {
+
+struct contracts {
+    static std::vector<uint8_t> system_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../../tests/contracts/led.system.wasm"); }
+    static std::string system_wast() { return read_wast("${CMAKE_BINARY_DIR}/../../tests/contracts/led.system.wast"); }
+    static std::vector<char> system_abi() { return read_abi("${CMAKE_BINARY_DIR}/../../tests/contracts/led.system.abi"); }
+    static std::vector<uint8_t> token_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../../tests/contracts/led.token.wasm"); }
+    static std::string token_wast() { return read_wast("${CMAKE_BINARY_DIR}/../../tests/contracts/led.token.wast"); }
+    static std::vector<char> token_abi() { return read_abi("${CMAKE_BINARY_DIR}/../../tests/contracts/led.token.abi"); }
+    static std::vector<uint8_t> project_contracts_wasm() { return read_wasm("${CMAKE_BINARY_DIR}/../contracts/project_contracts/project_contracts.wasm"); }
+    static std::string project_contracts_wast() { return read_wast("${CMAKE_BINARY_DIR}/../contracts/project_contracts/project_contracts.wast"); }
+    static std::vector<char> project_contracts_abi() { return read_abi("${CMAKE_BINARY_DIR}/../contracts/project_contracts/project_contracts.abi"); }
+};
+}  // namespace testing
+}  // namespace eosio
