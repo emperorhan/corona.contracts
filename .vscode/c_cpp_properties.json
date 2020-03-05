@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "/usr/local/include",
+                "/usr/local/include/eosiolib",
+                "/usr/include",
+                "/usr/local/Cellar/eosio.cdt/1.7.0/opt/eosio.cdt/include/eosiolib/contracts/",
+                "/usr/local/Cellar/eosio.cdt/1.7.0/opt/eosio.cdt/include/eosiolib/core/",
+                "/usr/local/Cellar/eosio.cdt/1.7.0/opt/eosio.cdt/include/",
+                "/usr/local/Cellar/ledgis/1.8.6/opt/ledgis/include/ledgislib/wasm-jit/include/",
+                "/usr/local/Cellar/ledgis/1.8.6/opt/ledgis/include/ledgislib/chain/include/",
+                "/usr/local/Cellar/ledgis/1.8.6/opt/ledgis/include/ledgislib/fc/include/",
+                "/usr/local/Cellar/ledgis/1.8.6/opt/ledgis/include/ledgislib/chainbase/include/",
+                "/usr/local/Cellar/ledgis/1.8.6/opt/ledgis/include/ledgislib/testing/include/",
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "macFrameworkPath": [
+                "/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/System/Library/Frameworks"
+            ],
+            "compilerPath": "/usr/bin/clang++",
+            "cStandard": "c11",
+            "intelliSenseMode": "clang-x64",
+            "cppStandard": "c++17",
+            "configurationProvider": "vector-of-bool.cmake-tools"
+        }
+    ],
+    "version": 4
+}
