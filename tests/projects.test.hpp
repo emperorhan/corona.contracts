@@ -17,13 +17,13 @@ using namespace std;
 
 using mvo = fc::mutable_variant_object;
 
-class project_tester : public tester {
+class corona_tester : public tester {
    public:
-    project_tester() {
+    corona_tester() {
         produce_blocks(2);
 
         create_accounts({N(alice), N(bob), N(carol), N(lily),
-                         N(yeop), N(pepp), N(project), N(ibct), N(led.token)});
+                         N(yeop), N(pepp), N(corona), N(ibct), N(led.token)});
         produce_blocks(2);
 
         set_code(N(led.token), contracts::token_wasm());
@@ -36,20 +36,20 @@ class project_tester : public tester {
         BOOST_REQUIRE_EQUAL(abi_serializer::to_abi(token_accnt.abi, token_abi), true);
         token_abi_ser.set_abi(token_abi, abi_serializer_max_time);
 
-        set_code(N(project), contracts::project_wasm());
-        set_abi(N(project), contracts::project_abi().data());
+        set_code(N(corona), contracts::corona_wasm());
+        set_abi(N(corona), contracts::corona_abi().data());
 
         produce_blocks();
 
-        const auto& project_accnt = control->db().get<account_object, by_name>(N(project));
-        abi_def project_abi;
-        BOOST_REQUIRE_EQUAL(abi_serializer::to_abi(project_accnt.abi, project_abi), true);
-        project_abi_ser.set_abi(project_abi, abi_serializer_max_time);
+        const auto& corona_accnt = control->db().get<account_object, by_name>(N(corona));
+        abi_def corona_abi;
+        BOOST_REQUIRE_EQUAL(abi_serializer::to_abi(corona_accnt.abi, corona_abi), true);
+        corona_abi_ser.set_abi(corona_abi, abi_serializer_max_time);
 
         produce_blocks(2);
 
-        create(N(project), asset::from_string("100000000.0000 ED"));
-        issue(N(project), N(project), asset::from_string("100000000.0000 ED"), "issue");
+        create(N(corona), asset::from_string("100000000.0000 ED"));
+        issue(N(corona), N(corona), asset::from_string("100000000.0000 ED"), "issue");
 
         produce_blocks(10);
     }
@@ -61,14 +61,14 @@ class project_tester : public tester {
 
         // the balance is implied to be 0 if either the table or row does not exist
         if (tbl) {
-            const auto* obj = db.find<key_value_object, by_scope_primary>(boost::make_tuple(tbl->id, symbol(PROJECT_SYM).to_symbol_code()));
+            const auto* obj = db.find<key_value_object, by_scope_primary>(boost::make_tuple(tbl->id, symbol(CORONA_SYM).to_symbol_code()));
             if (obj) {
                 // balance is the first field in the serialization
                 fc::datastream<const char*> ds(obj->value.data(), obj->value.size());
                 fc::raw::unpack(ds, result);
             }
         }
-        return asset(result, symbol(PROJECT_SYM));
+        return asset(result, symbol(CORONA_SYM));
     }
 
     string uint64_to_string(uint64_t value) {
@@ -84,45 +84,45 @@ class project_tester : public tester {
     }
 
     fc::variant get_creator(const name& act) {
-        vector<char> data = get_row_by_account(N(project), N(project), N(creators), act);
-        return data.empty() ? fc::variant() : project_abi_ser.binary_to_variant("CreatorInfo", data, abi_serializer_max_time);
+        vector<char> data = get_row_by_account(N(corona), N(corona), N(creators), act);
+        return data.empty() ? fc::variant() : corona_abi_ser.binary_to_variant("CreatorInfo", data, abi_serializer_max_time);
     }
 
     fc::variant get_test() {
-        vector<char> data = get_row_by_account(N(project), N(project), N(test), 1);
-        return data.empty() ? fc::variant() : project_abi_ser.binary_to_variant("Test", data, abi_serializer_max_time);
+        vector<char> data = get_row_by_account(N(corona), N(corona), N(test), 1);
+        return data.empty() ? fc::variant() : corona_abi_ser.binary_to_variant("Test", data, abi_serializer_max_time);
     }
 
     fc::variant get_product(const uint64_t& id) {
-        vector<char> data = get_row_by_account(N(project), N(project), N(products), id);
-        return data.empty() ? fc::variant() : project_abi_ser.binary_to_variant("ProductInfo", data, abi_serializer_max_time);
+        vector<char> data = get_row_by_account(N(corona), N(corona), N(products), id);
+        return data.empty() ? fc::variant() : corona_abi_ser.binary_to_variant("ProductInfo", data, abi_serializer_max_time);
     }
 
     fc::variant get_config_state() {
-        vector<char> data = get_row_by_account(N(project), N(project), N(config), N(config));
+        vector<char> data = get_row_by_account(N(corona), N(corona), N(config), N(config));
         if (data.empty())
             std::cout << "\nData is empty\n"
                       << std::endl;
-        return data.empty() ? fc::variant() : project_abi_ser.binary_to_variant("ConfigInfo", data, abi_serializer_max_time);
+        return data.empty() ? fc::variant() : corona_abi_ser.binary_to_variant("ConfigInfo", data, abi_serializer_max_time);
     }
 
     action_result push_action(const name& signer, const action_name& name, const variant_object& data) {
-        string action_type_name = project_abi_ser.get_action_type(name);
+        string action_type_name = corona_abi_ser.get_action_type(name);
 
         action act;
-        act.account = N(project);
+        act.account = N(corona);
         act.name = name;
-        act.data = project_abi_ser.variant_to_binary(action_type_name, data, abi_serializer_max_time);
+        act.data = corona_abi_ser.variant_to_binary(action_type_name, data, abi_serializer_max_time);
 
         return base_tester::push_action(std::move(act), uint64_t(signer));
     }
 
     transaction_trace_ptr push_multsign_action(const vector<name>& signer, const action_name& name, const variant_object& data) {
-        string action_type_name = project_abi_ser.get_action_type(name);
+        string action_type_name = corona_abi_ser.get_action_type(name);
         action act;
-        act.account = N(project);
+        act.account = N(corona);
         act.name = name;
-        act.data = project_abi_ser.variant_to_binary(action_type_name, data, abi_serializer_max_time);
+        act.data = corona_abi_ser.variant_to_binary(action_type_name, data, abi_serializer_max_time);
 
         vector<permission_level> permission;
         for (const auto& sign : signer) {
@@ -172,41 +172,41 @@ class project_tester : public tester {
     }
 
     action_result setcreator(const name& creator) {
-        return push_action(N(project), N(setcreator), mvo()("owner", creator));
+        return push_action(N(corona), N(setcreator), mvo()("owner", creator));
     }
 
     action_result setcustomer(const name& customer) {
-        return push_action(N(project), N(setcustomer), mvo()("owner", customer));
+        return push_action(N(corona), N(setcustomer), mvo()("owner", customer));
     }
 
-    action_result setpubkey(const public_key& projectPubKey) {
-        return push_action(N(project), N(setpubkey), mvo()("projectPubKey", projectPubKey));
+    action_result setpubkey(const public_key& coronaPubKey) {
+        return push_action(N(corona), N(setpubkey), mvo()("coronaPubKey", coronaPubKey));
     }
 
     action_result editstatus(const uint64_t& productId, const uint8_t status) {
-        return push_action(N(project), N(editstatus), mvo()("productId", productId)("status", status));
+        return push_action(N(corona), N(editstatus), mvo()("productId", productId)("status", status));
     }
 
     action_result addproduct(const uint64_t& productId, const name& creator, const asset& price, const string& productName, const string& description, const uint64_t& remixId, const uint64_t& ratio) {
         if (remixId == UINT64_MAX) {
-            return push_action(N(project), N(addproduct), mvo()("productId", productId)("creator", creator)("price", price)("productName", productName)("description", description)("remixId", nullptr)("ratio", nullptr));
+            return push_action(N(corona), N(addproduct), mvo()("productId", productId)("creator", creator)("price", price)("productName", productName)("description", description)("remixId", nullptr)("ratio", nullptr));
         } else {
-            return push_action(N(project), N(addproduct), mvo()("productId", productId)("creator", creator)("price", price)("productName", productName)("description", description)("remixId", remixId)("ratio", ratio));
+            return push_action(N(corona), N(addproduct), mvo()("productId", productId)("creator", creator)("price", price)("productName", productName)("description", description)("remixId", remixId)("ratio", ratio));
         }
     }
 
     action_result postreview(const name& owner, const uint64_t& product, const uint64_t& reviewId, const uint64_t& rating, const string& contents) {
-        return push_action(N(project), N(postreview), mvo()("reviewer", owner)("product", product)("reviewId", reviewId)("rating", rating)("contents", contents));
+        return push_action(N(corona), N(postreview), mvo()("reviewer", owner)("product", product)("reviewId", reviewId)("rating", rating)("contents", contents));
     }
 
     action_result givecoupon() {
-        return push_action(N(project), N(givecoupon), mvo());
+        return push_action(N(corona), N(givecoupon), mvo());
     }
 
     action_result giverewards() {
-        return push_action(N(project), N(giverewards), mvo());
+        return push_action(N(corona), N(giverewards), mvo());
     }
 
     abi_serializer token_abi_ser;
-    abi_serializer project_abi_ser;
+    abi_serializer corona_abi_ser;
 };

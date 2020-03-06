@@ -51,6 +51,15 @@
         "optional": "cpp",
         "thread": "cpp",
         "variant": "cpp",
-        "*.in": "cpp"
+        "*.in": "cpp",
+        "__string": "cpp",
+        "memory_resource": "cpp",
+        "fstream": "cpp",
+        "future": "cpp",
+        "locale": "cpp",
+        "queue": "cpp",
+        "unordered_set": "cpp",
+        "complex": "cpp",
+        "*.ipp": "cpp"
     }
 }

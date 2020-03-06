@@ -74,11 +74,11 @@ if [[ ${BUILD_TESTS} == true ]]; then
     export BOOST_ROOT="${LEDGIS_INSTALL_DIR}/src/boost_1_70_0"
 fi
 
-printf "\t=========== Building ledgis.contracts ===========\n\n"
+printf "\t=========== Building corona.contracts ===========\n\n"
 RED='\033[0;31m'
 NC='\033[0m'
 CPU_CORE=$(getconf _NPROCESSORS_ONLN)
-mkdir -p Build
+mkdir -p build
 pushd build &>/dev/null
 cmake -DBUILD_TESTS=${BUILD_TESTS} ../
 make -j $CPU_CORES

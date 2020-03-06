@@ -28,9 +28,9 @@ include_directories(${CMAKE_BINARY_DIR})
 include(CTest)
 enable_testing()
 # build unit test executable
-file(GLOB UNIT_TESTS "projects.cpp" "main.cpp" "projects.test.hpp" "test_symbol.hpp") # find all unit test suites
+file(GLOB UNIT_TESTS "corona.cpp" "main.cpp" "corona.test.hpp" "symbol.test.hpp") # find all unit test suites
 add_ledgis_test_executable(unit_test ${UNIT_TESTS}) # build unit tests as one executable
-file(GLOB BUYSOMETHING "buysomething.cpp" "main.cpp" "projects.test.hpp" "test_symbol.hpp") # find all unit test suites
+file(GLOB BUYSOMETHING "buysomething.cpp" "main.cpp" "corona.test.hpp" "symbol.test.hpp") # find all unit test suites
 add_ledgis_test_executable(buysomething ${BUYSOMETHING}) # build unit tests as one executable
 # mark test suites for execution
 foreach(TEST_SUITE ${UNIT_TESTS}) # create an independent target for each test suite

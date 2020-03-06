@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(project_contracts)
+project(corona_contracts)
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 0)
@@ -16,7 +16,7 @@ include(ExternalProject)
 
 find_package(eosio.cdt)
 
-message(STATUS "Building project_contracts v${VERSION_FULL}")
+message(STATUS "Building corona.contracts v${VERSION_FULL}")
 
 set(EOSIO_CDT_VERSION_MIN "1.7")
 set(EOSIO_CDT_VERSION_SOFT_MAX "1.7")
