@@ -42,10 +42,12 @@ void corona::regsuspect(const eosio::name& name) {
 
     const auto ct = time::currentTimePoint();
     if (uitr->status & BIT(types::STATUS_SUSPECTED_CASES)) {
+        # ifdef TEST
+        # elif
         uint32_t passedDay = ((ct.sec_since_epoch() / time::secondsPerDay) - (uitr->lastSuspectUpdate.sec_since_epoch() / time::secondsPerDay));
         eosio::check(passedDay > 2, "의심증상자로 (재)등록한지 3일이 지나야 합니다.");
         eosio::check(passedDay < 4, "의심증상자로 재등록할 수 있는 기간이 지났습니다.");
-
+        #endif
         uint32_t totalPassedDay = ((ct.sec_since_epoch() / time::secondsPerDay) - (uitr->setSuspectTime.sec_since_epoch() / time::secondsPerDay));
         eosio::check(totalPassedDay < 11, "더이상 의심증상자로 등록할 수 없습니다.");
 
@@ -74,9 +76,12 @@ void corona::regisolate(const eosio::name& name) {
 
     const auto ct = time::currentTimePoint();
     if (uitr->status & BIT(types::STATUS_QUARANTINED_CASES)) {
+        # ifdef TEST
+        # elif
         uint32_t passedDay = ((ct.sec_since_epoch() / time::secondsPerDay) - (uitr->lastSuspectUpdate.sec_since_epoch() / time::secondsPerDay));
         eosio::check(passedDay > 2, "자가격리자로 (재)등록한지 3일이 지나야 합니다.");
         eosio::check(passedDay < 4, "자가격리자로 재등록할 수 있는 기간이 지났습니다.");
+        # endif
 
         uint32_t totalPassedDay = ((ct.sec_since_epoch() / time::secondsPerDay) - (uitr->setSuspectTime.sec_since_epoch() / time::secondsPerDay));
         eosio::check(totalPassedDay < 8, "더이상 자가격리자로 등록할 수 없습니다.");
