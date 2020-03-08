@@ -137,8 +137,14 @@ void corona::locationserv(const eosio::name& name, const bool& agreement) {
 
     eosio::check((uitr->status & BIT(types::STATUS_LOCATION_AGREEMENT)) != agreement, "이미 위치서비스 제공에 대한 동의 및 거절이 승인된 상태입니다.");
 
-    usertable.modify(uitr, get_self(), [&](UserInfo& u) {
-        u.status |= BIT(types::STATUS_LOCATION_AGREEMENT);
-    });
+    if(agreement){
+        usertable.modify(uitr, get_self(), [&](UserInfo& u) {
+            u.status |= BIT(types::STATUS_LOCATION_AGREEMENT);
+        });
+    } else {
+        usertable.modify(uitr, get_self(), [&](UserInfo& u) {
+            u.status &= ~BIT(types::STATUS_LOCATION_AGREEMENT);
+        });
+    }
 }
 };  // namespace corona
