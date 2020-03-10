@@ -42,12 +42,12 @@ void corona::regsuspect(const eosio::name& name) {
 
     const auto ct = time::currentTimePoint();
     if (uitr->status & BIT(types::STATUS_SUSPECTED_CASES)) {
-        # ifdef TEST
-        # elif
+#ifdef TEST
+#elif
         uint32_t passedDay = ((ct.sec_since_epoch() / time::secondsPerDay) - (uitr->lastSuspectUpdate.sec_since_epoch() / time::secondsPerDay));
         eosio::check(passedDay > 2, "의심증상자로 (재)등록한지 3일이 지나야 합니다.");
         eosio::check(passedDay < 4, "의심증상자로 재등록할 수 있는 기간이 지났습니다.");
-        #endif
+#endif
         uint32_t totalPassedDay = ((ct.sec_since_epoch() / time::secondsPerDay) - (uitr->setSuspectTime.sec_since_epoch() / time::secondsPerDay));
         eosio::check(totalPassedDay < 11, "더이상 의심증상자로 등록할 수 없습니다.");
 
@@ -76,12 +76,12 @@ void corona::regisolate(const eosio::name& name) {
 
     const auto ct = time::currentTimePoint();
     if (uitr->status & BIT(types::STATUS_QUARANTINED_CASES)) {
-        # ifdef TEST
-        # elif
+#ifdef TEST
+#elif
         uint32_t passedDay = ((ct.sec_since_epoch() / time::secondsPerDay) - (uitr->lastSuspectUpdate.sec_since_epoch() / time::secondsPerDay));
         eosio::check(passedDay > 2, "자가격리자로 (재)등록한지 3일이 지나야 합니다.");
         eosio::check(passedDay < 4, "자가격리자로 재등록할 수 있는 기간이 지났습니다.");
-        # endif
+#endif
 
         uint32_t totalPassedDay = ((ct.sec_since_epoch() / time::secondsPerDay) - (uitr->setSuspectTime.sec_since_epoch() / time::secondsPerDay));
         eosio::check(totalPassedDay < 8, "더이상 자가격리자로 등록할 수 없습니다.");
@@ -128,23 +128,52 @@ void corona::unregisolate(const eosio::name& name) {
     });
 }
 
-void corona::locationserv(const eosio::name& name, const bool& agreement) {
+void corona::locservtosus(const eosio::name& name, const bool& agreement) {
     require_auth(name);
 
     usersTable usertable(get_self(), get_self().value);
     auto uitr = usertable.find(name.value);
     eosio::check(uitr != usertable.end(), "등록된 회원이 아닙니다.");
 
-    eosio::check((uitr->status & BIT(types::STATUS_LOCATION_AGREEMENT)) != agreement, "이미 위치서비스 제공에 대한 동의 및 거절이 승인된 상태입니다.");
+    eosio::check((uitr->status & BIT(types::STATUS_SUSPECTED_LOCATION_AGREEMENT)) != agreement, "이미 의심증상자 위치서비스 제공에 대한 동의 및 거절이 승인된 상태입니다.");
 
-    if(agreement){
+    if (agreement) {
         usertable.modify(uitr, get_self(), [&](UserInfo& u) {
-            u.status |= BIT(types::STATUS_LOCATION_AGREEMENT);
+            u.status |= BIT(types::STATUS_SUSPECTED_LOCATION_AGREEMENT);
         });
     } else {
         usertable.modify(uitr, get_self(), [&](UserInfo& u) {
-            u.status &= ~BIT(types::STATUS_LOCATION_AGREEMENT);
+            u.status &= ~BIT(types::STATUS_SUSPECTED_LOCATION_AGREEMENT);
         });
     }
+}
+
+void corona::locservtoiso(const eosio::name& name, const bool& agreement) {
+    require_auth(name);
+
+    usersTable usertable(get_self(), get_self().value);
+    auto uitr = usertable.find(name.value);
+    eosio::check(uitr != usertable.end(), "등록된 회원이 아닙니다.");
+
+    eosio::check((uitr->status & BIT(types::STATUS_QUARANTINED_LOCATION_AGREEMENT)) != agreement, "이미 자가격리자 위치서비스 제공에 대한 동의 및 거절이 승인된 상태입니다.");
+
+    if (agreement) {
+        usertable.modify(uitr, get_self(), [&](UserInfo& u) {
+            u.status |= BIT(types::STATUS_QUARANTINED_LOCATION_AGREEMENT);
+        });
+    } else {
+        usertable.modify(uitr, get_self(), [&](UserInfo& u) {
+            u.status &= ~BIT(types::STATUS_QUARANTINED_LOCATION_AGREEMENT);
+        });
+    }
+}
+
+void corona::cleantable() {
+    require_auth(get_self());
+
+    _cstate = getDefaultConfig();
+
+    table::cleanTable<usersTable>(get_self(), get_self().value);
+    table::cleanTable<donatesTable>(get_self(), get_self().value);
 }
 };  // namespace corona

@@ -12,7 +12,8 @@ namespace types {
 // proven cases 증명된 환자
 // donated cases 지원받은 환자
 enum status : uint8_t {
-    STATUS_LOCATION_AGREEMENT,
+    STATUS_SUSPECTED_LOCATION_AGREEMENT,
+    STATUS_QUARANTINED_LOCATION_AGREEMENT,
     STATUS_SUSPECTED_CASES,
     STATUS_QUARANTINED_CASES,
     STATUS_CONFIRMED_CASES,

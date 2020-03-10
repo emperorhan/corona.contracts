@@ -25,6 +25,7 @@
 #include "../../../types.h"
 #include "../../../utils/token.h"
 #include "../../../utils/time.h"
+#include "../../../utils/table.h"
 
 #define TEST
 #define BIT(x) (1 << (x))
@@ -43,15 +44,17 @@ struct [[eosio::table, eosio::contract("corona")]] UserInfo {
     uint64_t order;
     double score = 0;
 
-    // STATUS_LOCATION_AGREEMENT    위치서비스 제공 동의
-    // STATUS_SUSPECTED_CASES       의심환자
-    // STATUS_QUARANTINED_CASES     격리환자
-    // STATUS_CONFIRMED_CASES       확진환자
-    // STATUS_PROVEN_CASES          증명환자
-    // STATUS_DONATED_CASES         기부받은환자
+    // STATUS_SUSPECTED_LOCATION_AGREEMENT      의심환자 위치서비스 제공 동의
+    // STATUS_QUARANTINED_LOCATION_AGREEMENT    격리환자 위치서비스 제공 동의
+    // STATUS_SUSPECTED_CASES                   의심환자
+    // STATUS_QUARANTINED_CASES                 격리환자
+    // STATUS_CONFIRMED_CASES                   확진환자
+    // STATUS_PROVEN_CASES                      증명환자
+    // STATUS_DONATED_CASES                     기부받은환자
     uint8_t status;
 
-    eosio::time_point lastLocationServiceAgreementTime;
+    eosio::time_point lastSuspectLocationServiceAgreementTime;
+    eosio::time_point lastSelfIsolationLocationServiceAgreementTime;
 
     eosio::time_point setSuspectTime;
     eosio::time_point setSelfIsolationTime;
@@ -64,7 +67,7 @@ struct [[eosio::table, eosio::contract("corona")]] UserInfo {
     double by_scores() const { return -score; }
     double by_confirmed_scores() const { return status & BIT(types::STATUS_PROVEN_CASES) ? -score : score; }
 
-    EOSLIB_SERIALIZE(UserInfo, (name)(order)(score)(status)(lastLocationServiceAgreementTime)(setSuspectTime)(setSelfIsolationTime)(lastSuspectUpdate)(lastSelfIsolationUpdate));
+    EOSLIB_SERIALIZE(UserInfo, (name)(order)(score)(status)(lastSuspectLocationServiceAgreementTime)(lastSelfIsolationLocationServiceAgreementTime)(setSuspectTime)(setSelfIsolationTime)(lastSuspectUpdate)(lastSelfIsolationUpdate));
 };
 
 struct [[eosio::table, eosio::contract("corona")]] DonateInfo {
@@ -118,7 +121,10 @@ class [[eosio::contract("corona")]] corona : public eosio::contract {
     [[eosio::action]] void regisolate(const eosio::name& owner);
     [[eosio::action]] void unregsuspect(const eosio::name& owner);
     [[eosio::action]] void unregisolate(const eosio::name& owner);
-    [[eosio::action]] void locationserv(const eosio::name& owner, const bool& agreement);
+    [[eosio::action]] void locservtosus(const eosio::name& owner, const bool& agreement);
+    [[eosio::action]] void locservtoiso(const eosio::name& owner, const bool& agreement);
+
+    [[eosio::action]] void cleantable();
 
     // [[eosio::action]] void recvdotate(const eosio::name& name, const types::idType& tokenId);
 };
